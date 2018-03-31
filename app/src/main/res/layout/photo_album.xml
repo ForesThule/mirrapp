@@ -1,0 +1,14 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/ph_0"
+        style="@style/iv_photo_preview"
+        android:layout_marginLeft="0dp"
+        android:tag="0"/>
+
+    <ImageView
+        android:id="@+id/ph_1"
+        style="@style/iv_photo_preview"
+        android:tag="1"/>
+
+</merge>
