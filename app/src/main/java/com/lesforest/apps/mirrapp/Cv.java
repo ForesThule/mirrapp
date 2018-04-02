@@ -5,7 +5,7 @@ package com.lesforest.apps.mirrapp;
  */
 
 public interface Cv {
-    int PHOTO_FACT_LIMIT = 1;
+    int PHOTO_FACT_LIMIT = 2;
     int REQUEST_GALLERY = 10;
     int REQUEST_CAMERA_PHOTOALBUM = 11;
 }

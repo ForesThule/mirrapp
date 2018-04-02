@@ -48,8 +48,8 @@ public class PhotoAlbum extends LinearLayout {
 
   public void setData(List<String> photoLinksData){
     this.photoLinksData = photoLinksData;
-    showAlbum();
   }
+
   public List<String> getData(){
     return photoLinksData;
   }
@@ -81,24 +81,37 @@ public class PhotoAlbum extends LinearLayout {
 
   public void showAlbum() {
 
-    List<String> photoLinks = photoLinksData;
+    List<String> photoLinks = activity.getImageLinks();
 
-    for (ImageView iv : album) {
-      iv.setImageResource(R.drawable.ic_crop_original_black_48dp);
-    }
+
+//    for (ImageView iv : album) {
+//      iv.setImageResource(R.drawable.ic_crop_original_black_48dp);
+//    }
 
     for (int i = 0; i < photoLinks.size(); i++) {
 
       if (i < album.size()) {
         ImageView target = album.get(i);
-        Uri link = Uri.parse(photoLinks.get(i));
+
+        String uriString = photoLinks.get(i);
+        Uri link = Uri.parse(uriString);
+
+        System.out.println(uriString);
+        System.out.println(link);
 
         Picasso.with(activity)
-            .load(link)
+            .load(uriString)
             .fit()
             .centerInside()
             .placeholder(R.drawable.ic_crop_original_black_48dp)
             .into(target);
+
+
+//        GlideApp.with(this)
+//                .load(link)
+//                .placeholder(R.drawable.ic_arrow_back_black_24dp)
+//                .fitCenter()
+//                .into(target);
 
         target.invalidate();
       } else {
@@ -113,5 +126,9 @@ public class PhotoAlbum extends LinearLayout {
 
   public void notifyDataSetChanged() {
     showAlbum();
+  }
+
+  public void setAlbumPresenter(AlbumPresenter albumPresenter) {
+    this.albumPresenter = albumPresenter;
   }
 }

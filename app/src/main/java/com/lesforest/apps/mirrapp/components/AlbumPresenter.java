@@ -77,7 +77,7 @@ public class AlbumPresenter {
           //                    .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
           .gridExpectedSize(activity.getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
           .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-          .thumbnailScale(0.50f)
+          .thumbnailScale(2f)
           .imageEngine(new PicassoEngine())
           .theme(R.style.Matisse_rs)
           .forResult(Cv.REQUEST_GALLERY);
@@ -289,6 +289,7 @@ public class AlbumPresenter {
     int index = Integer.parseInt((String) view.getTag());
 
     if (index < photoAlbum.getData().size()) {
+
       viewer.getImageViewerPager().setCurrentItem(index);
       viewer.setVisibility(View.VISIBLE);
 

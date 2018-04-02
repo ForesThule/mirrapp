@@ -1,6 +1,7 @@
 package com.lesforest.apps.mirrapp.ui;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -12,49 +13,68 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.module.AppGlideModule;
 import com.desmond.squarecamera.CameraActivity;
-import com.desmond.squarecamera.SquareImageView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.lesforest.apps.mirrapp.ClaimDAO;
 import com.lesforest.apps.mirrapp.R;
 import com.lesforest.apps.mirrapp.ThisApp;
 import com.lesforest.apps.mirrapp.components.AlbumPresenter;
-import com.lesforest.apps.mirrapp.components.GlideApp;
+import com.lesforest.apps.mirrapp.components.PhotoAlbum;
 import com.lesforest.apps.mirrapp.components.PhotoAlbumViewer;
 import com.lesforest.apps.mirrapp.model.Claim;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.lesforest.apps.mirrapp.Cv.REQUEST_CAMERA_PHOTOALBUM;
+
 public class ClaimActivity extends AppCompatActivity {
 
     private Claim currentClaim;
+
     @BindView(R.id.imageView)
     ImageView imageView;
 
-    @BindView(R.id.viewer)
-    PhotoAlbumViewer photoAlbumViewer;
-    private AlbumPresenter presenter;
 
     @BindView(R.id.tv_date)
     TextView tvDate;
+
     @BindView(R.id.et_claim_name)
     EditText etName;
 
+
     @BindView(R.id.et_price)
     EditText etPrice;
-    @BindView(R.id.et_real_price)
-    EditText etRealPrice;
 
-    @BindView(R.id.et_profit)
-    TextView tvProfit;
+    @BindView(R.id.et_prepay)
+    EditText etPrepay;
+
+    @BindView(R.id.et_remain)
+    EditText etRemain;
+
+
+
+    @BindView(R.id.et_advance)
+    EditText etAdvance;
+
+    @BindView(R.id.et_surcharge)
+    EditText etSurcharge;
+
+    @BindView(R.id.et_cash)
+    EditText tvCash;
+
+    @BindView(R.id.photo_album)
+    PhotoAlbum photoAlbum;
+
+    @BindView(R.id.viewer)
+    PhotoAlbumViewer viewer;
+
+    private AlbumPresenter presenter;
 
 
     @Override
@@ -73,6 +93,7 @@ public class ClaimActivity extends AppCompatActivity {
         getclaim(action);
 
         prepareViews();
+
         showClaim();
     }
 
@@ -86,12 +107,13 @@ public class ClaimActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("CheckResult")
     private void prepareViews() {
 
         etName.setText(currentClaim.getName());
         etPrice.setText(String.valueOf(currentClaim.getPrice()));
-        etRealPrice.setText(String.valueOf(currentClaim.getReal_price()));
-        tvProfit.setText(String.valueOf(currentClaim.getProfit()));
+        etPrepay.setText(String.valueOf(currentClaim.getPrepay()));
+        tvCash.setText(String.valueOf(currentClaim.getCash()));
 
         RxTextView.textChanges(etName)
                 .skipInitialValue()
@@ -99,6 +121,7 @@ public class ClaimActivity extends AppCompatActivity {
                 .map(CharSequence::toString)
                 .subscribe(currentClaim::setName);
 
+        //цена
         RxTextView.textChanges(etPrice)
                 .skipInitialValue()
                 .filter(charSequence -> charSequence.length() > 0)
@@ -107,71 +130,106 @@ public class ClaimActivity extends AppCompatActivity {
                 .subscribe(price -> {
                     currentClaim.setPrice(price);
                     calculateProfit();
+                    calculateRemain();
                 }, throwable -> {
                     throwable.printStackTrace();
 //                    currentClaim.setPrice(0);
                 });
 
-        RxTextView.textChanges(etRealPrice)
+        //предоплата
+        RxTextView.textChanges(etPrepay)
                 .skipInitialValue()
                 .filter(charSequence -> charSequence.length() > 0)
                 .map(CharSequence::toString)
-                .subscribe(real_price -> {
+                .map(Double::parseDouble)
+                .subscribe(prepay -> {
+                    currentClaim.setPrepay(prepay);
+                    calculateRemain();
 
-                    double v = 0;
-                    try {
-                         v = Double.parseDouble(real_price);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-
-                    currentClaim.setReal_price(v);
-                    calculateProfit();
                 }, throwable -> {
                     throwable.printStackTrace();
-//                    currentClaim.setReal_price(0);
+                    currentClaim.setSurcharge(0);
                 });
+
+        //advance
+        RxTextView.textChanges(etAdvance)
+                .skipInitialValue()
+                .filter(charSequence -> charSequence.length() > 0)
+                .map(CharSequence::toString)
+                .map(Double::parseDouble)
+                .subscribe(avance -> {
+                    currentClaim.setAdvance(avance);
+                    calculateProfit();
+
+                }, throwable -> {
+                    throwable.printStackTrace();
+                    currentClaim.setAdvance(0);
+                });
+
+
+
+
+
+
+        presenter = new AlbumPresenter(this,photoAlbum);
+
+        photoAlbum.setAlbumPresenter(presenter);
+        photoAlbum.setData(currentClaim.getImageLinks());
+        photoAlbum.showAlbum();
+
+    }
+
+    private void calculateRemain() {
+
+        double prepay = currentClaim.getPrepay();
+        double price = currentClaim.getPrice();
+        double remain = price - prepay;
+        currentClaim.setRemain(remain);
+        etRemain.setText(String.valueOf(remain));
     }
 
     private void calculateProfit() {
 
+        double advance = currentClaim.getAdvance();
+        double surcharge = currentClaim.getSurcharge();
         double price = currentClaim.getPrice();
-        double real_price = currentClaim.getReal_price();
 
+        double cash = price - (advance + surcharge);
 
-        tvProfit.setText(String.valueOf(price - real_price));
-
-    }
-
-    private void onImageClick(View view) {
-
-
-        if (null != currentClaim.getImageLink()) {
-            openImageViewer();
-        } else {
-            requestForCameraPermission(view);
-        }
+        tvCash.setText(String.valueOf(cash));
+        currentClaim.setCash(cash);
 
     }
 
-    private void initImageView() {
+//    private void onImageClick(View view) {
+//
+//
+//        if (null != currentClaim.getImageLink()) {
+//            openImageViewer();
+//        } else {
+//            requestForCameraPermission(view);
+//        }
+//
+//    }
 
-        imageView.setOnClickListener(this::onImageClick);
-
-        String imageLink = currentClaim.getImageLink();
-
-        if (imageLink != null) {
-
-            GlideApp.with(this)
-                    .load(imageLink)
-                    .placeholder(R.drawable.ic_arrow_back_black_24dp)
-                    .fitCenter()
-                    .into(imageView);
-
-
-
-        }
-    }
+//    private void initImageView() {
+//
+//        imageView.setOnClickListener(this::onImageClick);
+//
+//        String imageLink = currentClaim.getImageLink();
+//
+//        if (imageLink != null) {
+//
+//            GlideApp.with(this)
+//                    .load(imageLink)
+//                    .placeholder(R.drawable.ic_arrow_back_black_24dp)
+//                    .fitCenter()
+//                    .into(imageView);
+//
+//
+//
+//        }
+//    }
 
     private void showPhoto() {
 
@@ -190,19 +248,32 @@ public class ClaimActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) return;
 
-        if (requestCode == REQUEST_CAMERA) {
+        if (requestCode == REQUEST_CAMERA_PHOTOALBUM) {
+
+            System.out.println(data);
+
             Uri photoUri = data.getData();
 
             savePhotoLink(photoUri);
-            showPhoto();
+
+            photoAlbum.setData(currentClaim.getImageLinks());
+            photoAlbum.showAlbum();
         }
+
+//        if (requestCode == REQUEST_CAMERA_PHOTOALBUM) {
+//            Uri photoUri = data.getData();
+//
+//            savePhotoLink(photoUri);
+//            photoAlbum.showAlbum();
+//        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void savePhotoLink(Uri photoUri) {
 
-        String path = photoUri.getPath();
-        currentClaim.setImageLink(path);
+//        String path = photoUri.getPath();
+//        currentClaim.addImagelink(path);
+        currentClaim.addImagelink(photoUri.toString());
     }
 
 
@@ -225,7 +296,8 @@ public class ClaimActivity extends AppCompatActivity {
         }
     }
 
-    private void openImageViewer() {
+    private void openInImageViewer(View v) {
+        presenter.openInImageViewer(v);
 
     }
 
@@ -233,7 +305,7 @@ public class ClaimActivity extends AppCompatActivity {
 
         tvDate.setText(currentClaim.getTimestamp());
 
-        initImageView();
+//        initImageView();
 
     }
 
@@ -250,11 +322,10 @@ public class ClaimActivity extends AppCompatActivity {
 
     private void startMainActivity() {
         startActivity(new Intent(this, MainActivity.class));
-        finish();
     }
 
     public PhotoAlbumViewer getAlbumViewer() {
-        return photoAlbumViewer;
+        return viewer;
     }
 
     public void showImage(View v) {
@@ -269,5 +340,9 @@ public class ClaimActivity extends AppCompatActivity {
 
     public void setAlbumPresenter(AlbumPresenter albumPresenter) {
         presenter = albumPresenter;
+    }
+
+    public List<String> getImageLinks() {
+        return currentClaim.getImageLinks();
     }
 }

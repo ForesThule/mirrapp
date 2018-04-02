@@ -4,7 +4,8 @@
         android:id="@+id/ph_0"
         style="@style/iv_photo_preview"
         android:layout_marginLeft="0dp"
-        android:tag="0"/>
+        android:tag="0"
+        />
 
     <ImageView
         android:id="@+id/ph_1"

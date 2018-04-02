@@ -4,15 +4,17 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverter;
+import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
-import java.util.Date;
+import com.lesforest.apps.mirrapp.ClaimTypeConverters;
 
-import io.reactivex.Observable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import io.reactivex.Observer;
-import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
 
 /**
  * Created by ve on 27.03.18.
@@ -29,6 +31,14 @@ public class Claim {
 
 //    private long time;
     private String description;
+
+
+    public void setImageLinks(List<String> imageLinks) {
+        this.imageLinks = imageLinks;
+    }
+
+    @TypeConverters(ClaimTypeConverters.class)
+    private List<String> imageLinks = new ArrayList<>();
 
     public Claim() {
     }
@@ -57,8 +67,36 @@ public class Claim {
     private String imageLink;
     boolean isPayed;
     private double price;
-    private double real_price;
-    private double profit;
+    private double prepay;
+
+    public double getRemain() {
+        return remain;
+    }
+
+    public void setRemain(double remain) {
+        this.remain = remain;
+    }
+
+    public double getAdvance() {
+        return advance;
+    }
+
+    public void setAdvance(double advance) {
+        this.advance = advance;
+    }
+
+    public double getSurcharge() {
+        return surcharge;
+    }
+
+    public void setSurcharge(double surcharge) {
+        this.surcharge = surcharge;
+    }
+
+    private double remain;
+    private double advance;
+    private double surcharge;
+    private double cash;
 
     private Claim(String name, String timestamp) {
         this.name = name;
@@ -66,14 +104,14 @@ public class Claim {
 //        time = timestamp;
     }
 
-    public Claim(String name, Date timestamp, String imageLink, boolean isPayed, double price, double real_price, double profit) {
+    public Claim(String name, Date timestamp, String imageLink, boolean isPayed, double price, double prepay, double cash) {
         this.name = name;
 //        this.timestamp = timestamp;
         this.imageLink = imageLink;
         this.isPayed = isPayed;
         this.price = price;
-        this.real_price = real_price;
-        this.profit = profit;
+        this.prepay = prepay;
+        this.cash = cash;
     }
 
 
@@ -112,28 +150,28 @@ public class Claim {
 
     public void setPrice(double price) {
         this.price = price;
-        setProfit(calclulateProfit());
+        setCash(calclulateProfit());
     }
 
     private double calclulateProfit() {
-        return price-real_price;
+        return price- prepay;
     }
 
-    public double getReal_price() {
-        return real_price;
+    public double getPrepay() {
+        return prepay;
     }
 
-    public void setReal_price(double real_price) {
-        this.real_price = real_price;
-        setProfit(calclulateProfit());
+    public void setPrepay(double prepay) {
+        this.prepay = prepay;
+        setCash(calclulateProfit());
     }
 
-    public double getProfit() {
-        return profit;
+    public double getCash() {
+        return cash;
     }
 
-    public void setProfit(double profit) {
-        this.profit = profit;
+    public void setCash(double cash) {
+        this.cash = cash;
         if (observer!= null) {
 
             observer.onNext(this);
@@ -159,5 +197,13 @@ public class Claim {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<String> getImageLinks() {
+        return imageLinks;
+    }
+
+    public void addImagelink(String path) {
+        imageLinks.add(path);
     }
 }

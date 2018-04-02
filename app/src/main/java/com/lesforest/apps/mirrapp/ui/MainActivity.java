@@ -58,6 +58,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        System.out.println("MainActivity.onCreate");
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
@@ -82,8 +85,6 @@ public class MainActivity extends AppCompatActivity implements
 
         initRecycler();
 
-        getData();
-
     }
 
     private void getData() {
@@ -96,6 +97,9 @@ public class MainActivity extends AppCompatActivity implements
 
 
         myAdapter.setData(dataSet);
+
+
+//        recyclerView.smoothScrollToPosition(dataSet.size()-1);
     }
 
     private void initRecycler() {
@@ -139,7 +143,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onResume() {
+        System.out.println("MainActivity.onResume");
         super.onResume();
+
+        getData();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {

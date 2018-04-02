@@ -119,7 +119,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         if (null != claim.getImageLink()){
             Glide.with(context).load(claim.getImageLink()).into(imageView);
         }else {
-            Glide.with(context).load("http://goo.gl/gEgYUd").into(imageView);
+            Glide.with(context).load("http://doorofperception.com/wp-content/uploads/doorofperception.com-moebius-color-8.jpg").into(imageView);
         }
 
         holder.frame.setOnClickListener(v ->{
