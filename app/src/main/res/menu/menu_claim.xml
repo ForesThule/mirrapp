@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.lesforest.apps.mirrapp.ui.main.MainActivity">
+
+    <!--<item-->
+        <!--android:id="@+id/menuShowDue"-->
+        <!--android:checkable="true"-->
+        <!--android:title="завершить"-->
+
+        <!--app:actionViewClass="android.widget.ToggleButton"-->
+        <!--app:showAsAction="always" />-->
+
+
+</menu>

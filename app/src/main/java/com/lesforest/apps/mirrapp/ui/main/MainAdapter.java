@@ -1,30 +1,35 @@
-package com.lesforest.apps.mirrapp.ui;
+package com.lesforest.apps.mirrapp.ui.main;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.cameraview.CameraView;
 import com.lesforest.apps.mirrapp.R;
 import com.lesforest.apps.mirrapp.model.Claim;
+import com.lesforest.apps.mirrapp.ui.ClaimActivity;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     private List<Claim> mDataset;
     private MainActivity context;
+    private AlertDialog alertDialog;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -67,14 +72,17 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(MainActivity context, List<Claim> myDataset) {
+    public MainAdapter(MainActivity context, List<Claim> myDataset) {
         this.context = context;
         mDataset = myDataset;
+
+
+
     }
 
     // Create new views (invoked by the layout manager)
     @Override
-    public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MainAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
 //        View v = LayoutInflater.from(parent.getContext())
 //                               .inflate(R.layout.my_text_view, parent, false);
@@ -97,6 +105,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
     // Replace the contents of a view (invoked by the layout manager)
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
@@ -109,6 +118,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.tvDesc.setText(claim.getDescription());
         holder.tvName.setText(claim.getName());
 
+        initDialog(context,claim);
+
         ImageView imageView = holder.imageView;
 
 //        imageView.setOnClickListener(view -> {
@@ -116,8 +127,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 //            context.showImage(view);
 //        });
 
-        if (null != claim.getImageLink()){
-            Glide.with(context).load(claim.getImageLink()).into(imageView);
+
+        if (claim.isFinish()){
+            holder.frame.setBackgroundColor(R.color.main_adapter_finish);
+        }else {
+
+        }
+
+        if (null != claim.getImageLinks()&&claim.getImageLinks().size()>0){
+            Glide.with(context).load(claim.getImageLinks().get(0)).into(imageView);
         }else {
             Glide.with(context).load("http://doorofperception.com/wp-content/uploads/doorofperception.com-moebius-color-8.jpg").into(imageView);
         }
@@ -133,10 +151,38 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         });
 
+        holder.frame.setOnLongClickListener(v -> {
+
+            showDialog(claim.getName());
+//            android.support.v4.app.DialogFragment dialogFragment = new android.support.v4.app.DialogFragment();
+//            dialogFragment.show(context.getSupportFragmentManager(),"FUUUU");
+//
+//            dialogFragment.setupDialog(dialog, android.support.v4.app.DialogFragment.STYLE_NORMAL);
+
+//            dialogFragment.show(context.getFragmentManager(),"FUCK");
+            return false;
+        });
+
 
 //        CameraView cameraView = holder.cameraView;
 //        cameraView.start();
     }
+
+    private void showDialog(String s){
+     alertDialog.setMessage(String.format("Заявку %s",s));
+     alertDialog.show();
+    }
+
+    private void initDialog(MainActivity context, Claim claim) {
+        alertDialog = new AlertDialog.Builder(context)
+                .setTitle(String.format("Удалить заявку"))
+                .setPositiveButton("Да",(dialog, which) -> {
+                    context.removeClaim(claim);
+                })
+                .create();
+//
+    }
+
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
@@ -146,6 +192,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     public void setData(List<Claim> data){
         mDataset = data;
+
+        Collections.sort(mDataset, (o1, o2) -> {
+            int result=0;
+            if (o1.isFinish() && o2.isFinish()){
+                result = 0;
+            }else if(!o1.isFinish() && !o2.isFinish()){
+                result = 0;
+            }else if(!o1.isFinish() && o2.isFinish()){
+                result = -1;
+            }else if(o1.isFinish() && !o2.isFinish()){
+                result = 1;
+            }
+            return result;
+        });
         notifyDataSetChanged();
     }
 }

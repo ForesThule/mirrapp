@@ -9,14 +9,17 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
 import com.desmond.squarecamera.CameraActivity;
+import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.lesforest.apps.mirrapp.ClaimDAO;
 import com.lesforest.apps.mirrapp.R;
@@ -25,6 +28,8 @@ import com.lesforest.apps.mirrapp.components.AlbumPresenter;
 import com.lesforest.apps.mirrapp.components.PhotoAlbum;
 import com.lesforest.apps.mirrapp.components.PhotoAlbumViewer;
 import com.lesforest.apps.mirrapp.model.Claim;
+import com.lesforest.apps.mirrapp.ui.main.MainActivity;
+import com.zhihu.matisse.Matisse;
 
 import java.util.List;
 
@@ -32,6 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.lesforest.apps.mirrapp.Cv.REQUEST_CAMERA_PHOTOALBUM;
+import static com.lesforest.apps.mirrapp.Cv.REQUEST_GALLERY;
 
 public class ClaimActivity extends AppCompatActivity {
 
@@ -57,6 +63,8 @@ public class ClaimActivity extends AppCompatActivity {
     @BindView(R.id.et_remain)
     EditText etRemain;
 
+    @BindView(R.id.button_finish)
+    Button buttonFinish;
 
 
     @BindView(R.id.et_advance)
@@ -87,9 +95,6 @@ public class ClaimActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String action = intent.getAction();
 
-        System.out.println(action);
-
-
         getclaim(action);
 
         prepareViews();
@@ -107,13 +112,37 @@ public class ClaimActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressLint("CheckResult")
+    @SuppressLint({"CheckResult", "ClickableViewAccessibility"})
     private void prepareViews() {
 
         etName.setText(currentClaim.getName());
         etPrice.setText(String.valueOf(currentClaim.getPrice()));
         etPrepay.setText(String.valueOf(currentClaim.getPrepay()));
         tvCash.setText(String.valueOf(currentClaim.getCash()));
+        etAdvance.setText(String.valueOf(currentClaim.getAdvance()));
+        etSurcharge.setText(String.valueOf(currentClaim.getSurcharge()));
+
+        calculateRemain();
+        calculateProfit();
+
+
+
+
+        etName.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_LEFT = 0;
+            final int DRAWABLE_TOP = 1;
+            final int DRAWABLE_RIGHT = 2;
+            final int DRAWABLE_BOTTOM = 3;
+
+            if(event.getAction() == MotionEvent.ACTION_UP) {
+                if(event.getRawX() >= (etName.getRight() - etName.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    // your action here
+                    etName.setText("");
+                    return true;
+                }
+            }
+            return false;
+        });
 
         RxTextView.textChanges(etName)
                 .skipInitialValue()
@@ -167,8 +196,36 @@ public class ClaimActivity extends AppCompatActivity {
                 });
 
 
+        RxTextView.textChanges(etSurcharge)
+                .skipInitialValue()
+                .filter(charSequence -> charSequence.length() > 0)
+                .map(CharSequence::toString)
+                .map(Double::parseDouble)
+                .subscribe(s -> {
+                    currentClaim.setSurcharge(s);
+                    calculateProfit();
+
+                }, throwable -> {
+                    throwable.printStackTrace();
+                    currentClaim.setAdvance(0);
+                });
 
 
+
+
+        RxView.clicks(buttonFinish)
+                .subscribe(o -> {
+
+                    currentClaim.finishClaim(o);
+                    onBackPressed();
+                });
+
+
+        if (currentClaim.isFinish()){
+            getSupportActionBar().setTitle("Завершена");
+        } else {
+            getSupportActionBar().setTitle("В работе");
+        }
 
 
         presenter = new AlbumPresenter(this,photoAlbum);
@@ -194,7 +251,9 @@ public class ClaimActivity extends AppCompatActivity {
         double surcharge = currentClaim.getSurcharge();
         double price = currentClaim.getPrice();
 
-        double cash = price - (advance + surcharge);
+        double v = advance + surcharge;
+
+        double cash = price - v;
 
         tvCash.setText(String.valueOf(cash));
         currentClaim.setCash(cash);
@@ -245,6 +304,12 @@ public class ClaimActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_claim, menu);
+        return true;
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) return;
 
@@ -260,13 +325,21 @@ public class ClaimActivity extends AppCompatActivity {
             photoAlbum.showAlbum();
         }
 
-//        if (requestCode == REQUEST_CAMERA_PHOTOALBUM) {
-//            Uri photoUri = data.getData();
-//
-//            savePhotoLink(photoUri);
-//            photoAlbum.showAlbum();
-//        }
+        if (requestCode == REQUEST_GALLERY && resultCode == RESULT_OK) {
+            List<Uri> uris = Matisse.obtainResult(data);
+
+            savePhotoLink(uris);
+            photoAlbum.showAlbum();
+        }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void savePhotoLink(List<Uri> uris) {
+        for (Uri uri : uris) {
+
+            currentClaim.addImagelink(uri.toString());
+        }
+
     }
 
     private void savePhotoLink(Uri photoUri) {
@@ -311,8 +384,13 @@ public class ClaimActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        saveClaim();
-        startMainActivity();
+
+        if (viewer.getVisibility()==View.VISIBLE){
+            viewer.setVisibility(View.GONE);
+        } else {
+            saveClaim();
+            startMainActivity();
+        }
     }
 
     private void saveClaim() {

@@ -6,221 +6,248 @@
     android:layout_height="match_parent"
     tools:context=".ui.ClaimActivity">
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp"
-        tools:context="com.lesforest.apps.mirrapp.ui.ClaimActivity">
+        android:layout_height="match_parent">
 
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/naimeFrame"
+
+        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="16dp">
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            tools:context="com.lesforest.apps.mirrapp.ui.ClaimActivity">
 
-            <EditText
-                android:id="@+id/et_claim_name"
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/naimeFrame"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="16dp">
+
+                <EditText
+                    android:drawableRight="@drawable/ic_close_grey_700_18dp"
+                    android:id="@+id/et_claim_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:hint="Описание"
+                    android:textSize="30sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:hint="Описание"
-                android:textSize="30sp"
+                android:text="TextView"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/naimeFrame" />
 
-        </android.support.design.widget.TextInputLayout>
-
-        <TextView
-            android:id="@+id/tv_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="TextView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/naimeFrame" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_crop_original_black_48dp" />
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/ic_crop_original_black_48dp" />
 
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/priceFrame"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/advanceFraim"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/photo_album">
-
-            <EditText
-                android:id="@+id/et_price"
-                android:layout_width="wrap_content"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/priceFrame"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:ems="10"
-                android:hint="Цена"
-                android:inputType="numberDecimal" />
+                app:layout_constraintEnd_toStartOf="@+id/advanceFraim"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/photo_album">
 
-        </android.support.design.widget.TextInputLayout>
+                <EditText
+                    android:id="@+id/et_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:ems="10"
+                    android:hint="Цена"
+                    android:inputType="numberDecimal" />
+
+            </android.support.design.widget.TextInputLayout>
 
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/remainFraim"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/cashFraim"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/prepayFraim">
-
-
-            <EditText
-                android:id="@+id/et_remain"
-                android:layout_width="wrap_content"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/remainFraim"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:ems="10"
-                android:hint="Остаток"
-                android:inputType="numberDecimal" />
-
-        </android.support.design.widget.TextInputLayout>
+                app:layout_constraintEnd_toStartOf="@+id/cashFraim"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/prepayFraim">
 
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/prepayFraim"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/surchargeFraim"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/priceFrame">
+                <EditText
+                    android:id="@+id/et_remain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:ems="10"
+                    android:hint="Остаток"
+                    android:inputType="numberDecimal" />
 
-            <EditText
-                android:id="@+id/et_prepay"
-                android:layout_width="wrap_content"
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/prepayFraim"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:ems="10"
-                android:hint="Предоплата"
-                android:inputType="numberDecimal" />
+                app:layout_constraintEnd_toStartOf="@+id/surchargeFraim"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/priceFrame">
 
-        </android.support.design.widget.TextInputLayout>
+                <EditText
+                    android:id="@+id/et_prepay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:ems="10"
+                    android:hint="Предоплата"
+                    android:inputType="numberDecimal" />
+
+            </android.support.design.widget.TextInputLayout>
 
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/advanceFraim"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/priceFrame"
-            app:layout_constraintTop_toBottomOf="@+id/photo_album">
-
-            <EditText
-                android:id="@+id/et_advance"
-                android:layout_width="wrap_content"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/advanceFraim"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/priceFrame"
+                app:layout_constraintTop_toBottomOf="@+id/photo_album">
+
+                <EditText
+                    android:id="@+id/et_advance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:ems="10"
+                    android:hint="Аванс"
+                    android:inputType="numberDecimal" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/surchargeFraim"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/prepayFraim"
+                app:layout_constraintTop_toBottomOf="@+id/advanceFraim">
+
+                <EditText
+                    android:id="@+id/et_surcharge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:ems="10"
+                    android:hint="Доплата"
+                    android:inputType="numberDecimal" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/cashFraim"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/remainFraim"
+                app:layout_constraintTop_toBottomOf="@+id/surchargeFraim">
+
+                <EditText
+                    android:id="@+id/et_cash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:ems="10"
+                    android:hint="Маржа"
+                    android:inputType="numberDecimal" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:id="@+id/button_finish"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:ems="10"
-                android:hint="Аванс"
-                android:inputType="numberDecimal" />
-
-        </android.support.design.widget.TextInputLayout>
+                android:text="Завершить заявку"
 
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/surchargeFraim"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/prepayFraim"
-            app:layout_constraintTop_toBottomOf="@+id/advanceFraim">
 
-            <EditText
-                android:id="@+id/et_surcharge"
-                android:layout_width="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+
+                app:layout_constraintTop_toBottomOf="@+id/remainFraim" />
+
+
+            <com.lesforest.apps.mirrapp.components.PhotoAlbum
+                android:layout_marginLeft="16dp"
+                android:id="@+id/photo_album"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:ems="10"
-                android:hint="Доплата"
-                android:inputType="numberDecimal" />
-
-        </android.support.design.widget.TextInputLayout>
+                app:layout_constraintTop_toBottomOf="@+id/tv_date"
+                tools:layout_editor_absoluteX="16dp">
 
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/cashFraim"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/remainFraim"
-            app:layout_constraintTop_toBottomOf="@+id/surchargeFraim">
-
-            <EditText
-                android:id="@+id/et_cash"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:ems="10"
-                android:hint="Маржа"
-                android:inputType="numberDecimal" />
-
-        </android.support.design.widget.TextInputLayout>
+            </com.lesforest.apps.mirrapp.components.PhotoAlbum>
 
 
-        <com.lesforest.apps.mirrapp.components.PhotoAlbum
-            android:id="@+id/photo_album"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/tv_date"
-            tools:layout_editor_absoluteX="16dp">
 
 
-        </com.lesforest.apps.mirrapp.components.PhotoAlbum>
+
+
+
+
+
+
+
+        </android.support.constraint.ConstraintLayout>
 
 
         <com.lesforest.apps.mirrapp.components.PhotoAlbumViewer
             android:id="@+id/viewer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"></com.lesforest.apps.mirrapp.components.PhotoAlbumViewer>
-
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="20dp" />
-
-    </android.support.constraint.ConstraintLayout>
+            android:visibility="gone"/>
+    </FrameLayout>
 
 </ScrollView>

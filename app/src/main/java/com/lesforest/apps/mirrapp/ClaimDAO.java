@@ -36,5 +36,6 @@ public interface ClaimDAO {
     void insertAll(Claim... claims);
 
     @Delete
+    @Transaction
     void delete(Claim claim);
 }

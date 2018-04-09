@@ -1,4 +1,4 @@
-package com.lesforest.apps.mirrapp.ui;
+package com.lesforest.apps.mirrapp.ui.main;
 
 import android.Manifest;
 import android.content.Intent;
@@ -18,13 +18,11 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.lesforest.apps.mirrapp.ClaimDAO;
-import com.lesforest.apps.mirrapp.ConfirmationDialogFragment;
 import com.lesforest.apps.mirrapp.R;
 import com.lesforest.apps.mirrapp.ThisApp;
 import com.lesforest.apps.mirrapp.components.AlbumPresenter;
-import com.lesforest.apps.mirrapp.components.PhotoAlbumViewer;
 import com.lesforest.apps.mirrapp.model.Claim;
-import com.lesforest.apps.mirrapp.model.ClaimBuilder;
+import com.lesforest.apps.mirrapp.ui.ClaimActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,7 +30,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements
@@ -43,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements
 
     RecyclerView recyclerView;
     List<Claim> dataSet = new ArrayList<>();
-    private MyAdapter myAdapter;
+    private MainAdapter mainAdapter;
     private LinearLayoutManager mLayoutManager;
 
     SharedElementCallback sharedElementCallback = new SharedElementCallback() {
@@ -52,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements
             super.onMapSharedElements(names, sharedElements);
         }
     };
+
     private ThisApp app;
     private Claim currentClaim;
     private AlbumPresenter presenter;
@@ -69,14 +67,11 @@ public class MainActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        fab.setOnClickListener(view -> {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
 
-                createClaim();
-            }
+            createClaim();
         });
 
 
@@ -96,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements
         }
 
 
-        myAdapter.setData(dataSet);
+        mainAdapter.setData(dataSet);
 
 
 //        recyclerView.smoothScrollToPosition(dataSet.size()-1);
@@ -105,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements
     private void initRecycler() {
 
         recyclerView = (RecyclerView) findViewById(R.id.main_recycler);
-        myAdapter = new MyAdapter(this, dataSet);
+        mainAdapter = new MainAdapter(this, dataSet);
 
         recyclerView.setHasFixedSize(true);
 
@@ -113,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements
         mLayoutManager = new LinearLayoutManager(this, 1, false);
         recyclerView.setLayoutManager(mLayoutManager);
 
-        recyclerView.setAdapter(myAdapter);
+        recyclerView.setAdapter(mainAdapter);
     }
 
 
@@ -205,4 +200,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+    public void removeClaim(Claim claim) {
+
+
+        ClaimDAO claimDAO = app.getDb().claimDAO();
+        claimDAO.delete(claim);
+
+        getData();
+    }
 }

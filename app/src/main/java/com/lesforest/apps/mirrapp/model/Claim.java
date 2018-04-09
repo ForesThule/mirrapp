@@ -31,6 +31,7 @@ public class Claim {
 
 //    private long time;
     private String description;
+    private boolean isFinish;
 
 
     public void setImageLinks(List<String> imageLinks) {
@@ -205,5 +206,17 @@ public class Claim {
 
     public void addImagelink(String path) {
         imageLinks.add(path);
+    }
+
+    public void finishClaim(Object o) {
+        isFinish = true;
+    }
+
+    public boolean isFinish() {
+        return isFinish;
+    }
+
+    public void setFinish(boolean finish) {
+        isFinish = finish;
     }
 }

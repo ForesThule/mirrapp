@@ -9,9 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.lesforest.apps.mirrapp.R;
-import com.lesforest.apps.mirrapp.model.Claim;
 import com.lesforest.apps.mirrapp.ui.ClaimActivity;
-import com.lesforest.apps.mirrapp.ui.MainActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -28,83 +26,85 @@ import timber.log.Timber;
 
 public class PhotoAlbum extends LinearLayout {
 
-  ClaimActivity activity;
-  View rootView;
-  @BindViews({R.id.ph_0, R.id.ph_1}) List<ImageView> album;
+    ClaimActivity activity;
+    View rootView;
+    @BindViews({R.id.ph_0, R.id.ph_1, R.id.ph_2, R.id.ph_3})
+    List<ImageView> album;
 
 
-  private List<String> photoLinksData = new ArrayList<>();
+    private List<String> photoLinksData = new ArrayList<>();
 
-  private AlbumPresenter albumPresenter;
+    private AlbumPresenter albumPresenter;
 
-  //private PhotoAlbumViewer albumViewer;
+    //private PhotoAlbumViewer albumViewer;
 
-  public PhotoAlbum(ClaimActivity activity, PhotoAlbumViewer viewer) {
-    super(activity);
-    this.activity = activity;
-    //albumViewer = viewer;
-    init(activity);
-  }
-
-  public void setData(List<String> photoLinksData){
-    this.photoLinksData = photoLinksData;
-  }
-
-  public List<String> getData(){
-    return photoLinksData;
-  }
-
-
-  public PhotoAlbum(Context context, @Nullable AttributeSet attrs) {
-    super(context, attrs);
-    activity = (ClaimActivity) context;
-    init(context);
-  }
-
-  private void init(Context context){
-    rootView = inflate(context,R.layout.photo_album,this);
-    ButterKnife.bind(this);
-
-    //albumViewer = new PhotoAlbumViewer(context);
-
-
-    for (ImageView imageView : album) {
-      imageView.setOnClickListener(view -> {
-        //albumPresenter.setCurrentData(photoLinksData);
-        activity.setAlbumPresenter(albumPresenter);
-
-        albumPresenter.openInImageViewer(view);
-      });
+    public PhotoAlbum(ClaimActivity activity, PhotoAlbumViewer viewer) {
+        super(activity);
+        this.activity = activity;
+        //albumViewer = viewer;
+        init(activity);
     }
-  }
+
+    public void setData(List<String> photoLinksData) {
+        this.photoLinksData = photoLinksData;
+    }
+
+    public List<String> getData() {
+        return photoLinksData;
+    }
 
 
-  public void showAlbum() {
+    public PhotoAlbum(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        activity = (ClaimActivity) context;
+        init(context);
+    }
 
-    List<String> photoLinks = activity.getImageLinks();
+    private void init(Context context) {
+        rootView = inflate(context, R.layout.photo_album, this);
+        ButterKnife.bind(this);
+
+        //albumViewer = new PhotoAlbumViewer(context);
+
+
+        for (ImageView imageView : album) {
+            imageView.setOnClickListener(view -> {
+                //albumPresenter.setCurrentData(photoLinksData);
+                activity.setAlbumPresenter(albumPresenter);
+
+                albumPresenter.openInImageViewer(view);
+            });
+        }
+    }
+
+
+    public void showAlbum() {
+
+        List<String> photoLinks = activity.getImageLinks();
 
 
 //    for (ImageView iv : album) {
 //      iv.setImageResource(R.drawable.ic_crop_original_black_48dp);
 //    }
 
-    for (int i = 0; i < photoLinks.size(); i++) {
+        for (int i = 0; i < photoLinks.size(); i++) {
 
-      if (i < album.size()) {
-        ImageView target = album.get(i);
+            if (i < album.size()) {
+                ImageView target = album.get(i);
 
-        String uriString = photoLinks.get(i);
-        Uri link = Uri.parse(uriString);
+                String uriString = photoLinks.get(i);
+                Uri link = Uri.parse(uriString);
 
-        System.out.println(uriString);
-        System.out.println(link);
+                System.out.println(uriString);
+                System.out.println(link);
 
-        Picasso.with(activity)
-            .load(uriString)
-            .fit()
-            .centerInside()
-            .placeholder(R.drawable.ic_crop_original_black_48dp)
-            .into(target);
+                Picasso.with(activity)
+                        .load(uriString)
+                        .fit()
+                        .centerCrop()
+//                        .centerInside()
+                        .placeholder(R.drawable.ic_crop_original_black_48dp)
+                        .into(target);
 
 
 //        GlideApp.with(this)
@@ -113,22 +113,22 @@ public class PhotoAlbum extends LinearLayout {
 //                .fitCenter()
 //                .into(target);
 
-        target.invalidate();
-      } else {
-        Timber.i("Album index out of bound: album size = %d, index = %d", album.size(), i);
-      }
+                target.invalidate();
+            } else {
+                Timber.i("Album index out of bound: album size = %d, index = %d", album.size(), i);
+            }
+        }
     }
-  }
 
-  //public PhotoAlbumViewer getAlbumViewer() {
-  //  return albumViewer;
-  //}
+    //public PhotoAlbumViewer getAlbumViewer() {
+    //  return albumViewer;
+    //}
 
-  public void notifyDataSetChanged() {
-    showAlbum();
-  }
+    public void notifyDataSetChanged() {
+        showAlbum();
+    }
 
-  public void setAlbumPresenter(AlbumPresenter albumPresenter) {
-    this.albumPresenter = albumPresenter;
-  }
+    public void setAlbumPresenter(AlbumPresenter albumPresenter) {
+        this.albumPresenter = albumPresenter;
+    }
 }

@@ -9,7 +9,7 @@ import com.lesforest.apps.mirrapp.model.Claim;
  * Created by ve on 29.03.18.
  */
 
-@Database(entities = {Claim.class}, version = 9,exportSchema = false)
+@Database(entities = {Claim.class}, version = 10,exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract ClaimDAO claimDAO();
 }

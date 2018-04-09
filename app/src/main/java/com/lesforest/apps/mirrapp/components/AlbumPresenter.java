@@ -7,15 +7,14 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.desmond.squarecamera.CameraActivity;
 import com.lesforest.apps.mirrapp.Cv;
 import com.lesforest.apps.mirrapp.R;
-import com.lesforest.apps.mirrapp.model.Claim;
 import com.lesforest.apps.mirrapp.ui.ClaimActivity;
-import com.lesforest.apps.mirrapp.ui.MainActivity;
 import com.squareup.picasso.Picasso;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -51,7 +50,7 @@ public class AlbumPresenter {
 
     if (photoAlbum.getData().size() < Cv.PHOTO_FACT_LIMIT) {
 
-      assignImageUri();
+//      assignImageUri();
 
       Intent takePhotoIntent = new Intent(activity, CameraActivity.class);
 
@@ -77,7 +76,7 @@ public class AlbumPresenter {
           //                    .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
           .gridExpectedSize(activity.getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
           .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-          .thumbnailScale(2f)
+          .thumbnailScale(1.0f)
           .imageEngine(new PicassoEngine())
           .theme(R.style.Matisse_rs)
           .forResult(Cv.REQUEST_GALLERY);
@@ -123,7 +122,7 @@ public class AlbumPresenter {
 
     try {
 
-      assignImageUri();
+//      assignImageUri();
 
       Timber.i(currentPhotoUri.toString());
 
@@ -173,6 +172,7 @@ public class AlbumPresenter {
   }
 
   public void showAlbum() {
+    photoAlbum.showAlbum();
     photoAlbum.notifyDataSetChanged();
   }
 
@@ -298,6 +298,37 @@ public class AlbumPresenter {
     } else {
       showTakePhotoChooser();
     }
+  }
+
+  public Bitmap bitmapResize(Bitmap imageBitmap) {
+
+    Bitmap bitmap = imageBitmap;
+    float lengthbmp = bitmap.getHeight();
+    float widthbmp = bitmap.getWidth();
+
+    // Get Screen width
+    DisplayMetrics displaymetrics = new DisplayMetrics();
+    activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+    float hight = displaymetrics.heightPixels / 3;
+    float width = displaymetrics.widthPixels / 3;
+
+    int convertHighet = (int) hight, convertWidth = (int) width;
+
+    // high length
+    if (lengthbmp > hight) {
+      convertHighet = (int) hight - 20;
+      bitmap = Bitmap.createScaledBitmap(bitmap, convertWidth,
+              convertHighet, true);
+    }
+
+    // high width
+    if (widthbmp > width) {
+      convertWidth = (int) width - 20;
+      bitmap = Bitmap.createScaledBitmap(bitmap, convertWidth,
+              convertHighet, true);
+    }
+
+    return bitmap;
   }
 
 

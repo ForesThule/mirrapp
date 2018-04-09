@@ -29,7 +29,7 @@ public class ThisApp extends Application {
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "main_database")
                 .allowMainThreadQueries()
-                .fallbackToDestructiveMigration()
+//                .fallbackToDestructiveMigration()
                 .build();
 
         if (BuildConfig.DEBUG) {
