@@ -32,7 +32,7 @@ import timber.log.Timber;
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     private List<Claim> mDataset;
     private MainActivity context;
-    private AlertDialog alertDialog;
+    private AlertDialog.Builder alertDialog;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -82,45 +82,22 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         }
     }
 
-    // Provide a suitable constructor (depends on the kind of dataset)
     public MainAdapter(MainActivity context, List<Claim> myDataset) {
         this.context = context;
         mDataset = myDataset;
 
-
-
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
     public MainAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
-//        View v = LayoutInflater.from(parent.getContext())
-//                               .inflate(R.layout.my_text_view, parent, false);
-//        // set the view's size, margins, paddings and layout parameters
-//        TextView tv = (TextView) parent.findViewById(R.id.tv_claim_name);
-////        tv.setText("SSSSSSSSSSSSSSSssss");
-////        CameraView cv = (CameraView) parent.findViewById(R.id.camera);
-//
-//
-//        ImageView imageView = (ImageView) parent.findViewById(R.id.image);
-//
-//
-//        ViewHolder vh = new ViewHolder(new TextView(v.getContext()),imageView);
-//        return vh;
-
-
         return new ViewHolder(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.my_text_view, parent, false));
 
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
 
 
         Claim claim = mDataset.get(position);
@@ -131,14 +108,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         holder.tvName.setTextColor(R.color.black);
 
 
-        initDialog(context,claim);
+        initDialog();
 
         ImageView imageView = holder.imageView;
 
-//        imageView.setOnClickListener(view -> {
-//            context.setCurrentClaim(mDataset.get(position));
-//            context.showImage(view);
-//        });
 
         Timber.i("CLAIM: %s",claim);
 
@@ -172,30 +145,29 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
         holder.frame.setOnLongClickListener(v -> {
 
-            showDialog(claim.getName());
+            showDialog(claim.getName(),holder.getAdapterPosition());
 
             return false;
         });
 
     }
 
-    private void showDialog(String s){
-     alertDialog.setMessage(String.format("Заявку %s",s));
-     alertDialog.show();
-    }
-
-    private void initDialog(MainActivity context, Claim claim) {
-        alertDialog = new AlertDialog.Builder(context)
+    private void showDialog(String s, int adapterPosition){
+        alertDialog
                 .setTitle(String.format("Удалить заявку"))
                 .setPositiveButton("Да",(dialog, which) -> {
-                    context.removeClaim(claim);
-                })
-                .create();
-//
+                    context.removeClaim(mDataset.get(adapterPosition));
+                });
+        alertDialog.setMessage(String.format("Заявку %s",s));
+        alertDialog.show();
+    }
+
+    private void initDialog() {
+        alertDialog = new AlertDialog.Builder(context);
+        alertDialog.create();
     }
 
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mDataset.size()  ;

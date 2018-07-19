@@ -357,13 +357,10 @@ public class ClaimActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, permission)
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-                // Show permission rationale
             } else {
-                // Handle the result in Activity#onRequestPermissionResult(int, String[], int[])
 //                ActivityCompat.requestPermissions(ClaimActivity.this, new String[]{permission}, REQUEST_CAMERA_PERMISSION);
             }
         } else {
-            // Start CameraActivity
             takePhoto();
         }
     }
