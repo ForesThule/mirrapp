@@ -215,7 +215,6 @@ public class ClaimActivity extends AppCompatActivity {
 
         RxView.clicks(buttonFinish)
                 .subscribe(o -> {
-
                     currentClaim.finishClaim(o);
                     onBackPressed();
                 });

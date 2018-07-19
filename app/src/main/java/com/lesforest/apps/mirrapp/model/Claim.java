@@ -31,7 +31,28 @@ public class Claim {
 
 //    private long time;
     private String description;
-    private boolean isFinish;
+
+    @Override
+    public String toString() {
+        return "Claim{" +
+                "observer=" + observer +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", isFinish=" + isFinish +
+                ", imageLinks=" + imageLinks +
+                ", timestamp='" + timestamp + '\'' +
+                ", imageLink='" + imageLink + '\'' +
+                ", isPayed=" + isPayed +
+                ", price=" + price +
+                ", prepay=" + prepay +
+                ", remain=" + remain +
+                ", advance=" + advance +
+                ", surcharge=" + surcharge +
+                ", cash=" + cash +
+                '}';
+    }
+
+    private boolean isFinish = false;
 
 
     public void setImageLinks(List<String> imageLinks) {
@@ -180,14 +201,6 @@ public class Claim {
     }
 
 
-    @Override
-    public String toString() {
-        return "Claim{" +
-                "name='" + name + '\'' +
-                ", timestamp=" + timestamp +
-                '}';
-    }
-
     public void setImageLink(String imageLink) {
         this.imageLink = imageLink;
     }
@@ -208,7 +221,7 @@ public class Claim {
         imageLinks.add(path);
     }
 
-    public void finishClaim(Object o) {
+    public void finishClaim(Object __) {
         isFinish = true;
     }
 

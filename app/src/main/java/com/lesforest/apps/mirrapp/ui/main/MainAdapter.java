@@ -3,6 +3,7 @@ package com.lesforest.apps.mirrapp.ui.main;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,8 +24,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     private List<Claim> mDataset;
@@ -46,6 +49,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         TextView tvDesc;
         @BindView(R.id.tv_claim_timestamp)
         TextView tvTimestamp;
+
+        @BindView(R.id.tv_status)
+        TextView tvStatus;
+//
+        @BindColor(R.color.main_adapter_finish)
+        int finishColor;
+        @BindColor(R.color.main_adapter_inwork)
+        int inWorkColor;
 
         @BindView(R.id.image)
         ImageView imageView;
@@ -117,6 +128,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         holder.tvTimestamp.setText(claim.getTimestamp().toString());
         holder.tvDesc.setText(claim.getDescription());
         holder.tvName.setText(claim.getName());
+        holder.tvName.setTextColor(R.color.black);
+
 
         initDialog(context,claim);
 
@@ -127,10 +140,18 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 //            context.showImage(view);
 //        });
 
+        Timber.i("CLAIM: %s",claim);
 
         if (claim.isFinish()){
-            holder.frame.setBackgroundColor(R.color.main_adapter_finish);
+            holder.tvStatus.setText("завершено");
+            holder.tvStatus.setTextColor(context.getResources().getColor(R.color.colorAccent));
+            holder.frame.setBackgroundColor(holder.inWorkColor);
+
         }else {
+            holder.tvStatus.setText("в работе");
+            holder.tvStatus.setTextColor(context.getResources().getColor(R.color.colorInWork));
+
+            holder.frame.setBackgroundColor(holder.finishColor);
 
         }
 
@@ -142,30 +163,20 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
         holder.frame.setOnClickListener(v ->{
 
-
             Context context = v.getContext();
             Intent intent = new Intent(context,ClaimActivity.class);
             intent.setAction(claim.getTimestamp());
             context.startActivity(intent);
-
 
         });
 
         holder.frame.setOnLongClickListener(v -> {
 
             showDialog(claim.getName());
-//            android.support.v4.app.DialogFragment dialogFragment = new android.support.v4.app.DialogFragment();
-//            dialogFragment.show(context.getSupportFragmentManager(),"FUUUU");
-//
-//            dialogFragment.setupDialog(dialog, android.support.v4.app.DialogFragment.STYLE_NORMAL);
 
-//            dialogFragment.show(context.getFragmentManager(),"FUCK");
             return false;
         });
 
-
-//        CameraView cameraView = holder.cameraView;
-//        cameraView.start();
     }
 
     private void showDialog(String s){
@@ -192,7 +203,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     public void setData(List<Claim> data){
         mDataset = data;
-
         Collections.sort(mDataset, (o1, o2) -> {
             int result=0;
             if (o1.isFinish() && o2.isFinish()){

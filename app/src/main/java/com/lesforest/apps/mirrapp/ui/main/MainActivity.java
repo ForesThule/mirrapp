@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.SharedElementCallback;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this, 1, false);
         recyclerView.setLayoutManager(mLayoutManager);
-
+        recyclerView.addItemDecoration(new DividerItemDecoration(this,1));
         recyclerView.setAdapter(mainAdapter);
     }
 
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements
         String format = "dd.MM.yyyy hh:mm:ss";
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         String datetime = sdf.format(new Date(System.currentTimeMillis()));
-        Claim claim = Claim.createClaim("NEW", datetime);
+        Claim claim = Claim.createClaim("", datetime);
 
         saveClaim(claim);
 

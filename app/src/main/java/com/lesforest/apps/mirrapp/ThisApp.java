@@ -1,7 +1,9 @@
 package com.lesforest.apps.mirrapp;
 
 import android.app.Application;
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
+import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -12,6 +14,14 @@ import timber.log.Timber;
 
 
 public class ThisApp extends Application {
+
+
+    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            // Since we didn't alter the table, there's nothing else to do here.
+        }
+    };
 
     private AppDatabase db;
     public MyAppGlideModule myAppGlideModule;
@@ -26,10 +36,14 @@ public class ThisApp extends Application {
 
         myAppGlideModule = new MyAppGlideModule();
 
+
+
+
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "main_database")
                 .allowMainThreadQueries()
-//                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration()
+//                .addMigrations(MIGRATION_1_2)
                 .build();
 
         if (BuildConfig.DEBUG) {
